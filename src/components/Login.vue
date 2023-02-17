@@ -1,16 +1,21 @@
 <script>
+    export default {
+        name: "Home",
+    }
+
 </script>
 
 <template>
     <div class="titleCard">
-        <h1>joelbc-spotify</h1>
-        <p>Explanation of service</p>
+        <p>Details about permissions, etc</p>
+        <button>Login with Spotify</button>
     </div>
 </template>
 
 <style scoped>
-    h1 {
-        font-weight: 900;
-        font-size: 40px;
+    button {
+        font-weight: 500;
+        font-size: 25px;
+        fill: green;
     }
 </style>
