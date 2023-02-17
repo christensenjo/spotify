@@ -1,14 +1,62 @@
 <script>
-    export default {
-        name: "Home",
+    import querystring from 'querystring'
+    const client_id = 'CLIENT_ID'
+    import client_secret from './secrets'
+    const redirect_uri = 'http://127.0.0.1:5173/login'
+
+    const generateRandomString = function(length) {
+        var text = ''
+        var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+        for (var i = 0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length))
+        }
+        return text
     }
 
+    const loginWithSpotify = async function(event) {
+                if (event) {
+                    let state = generateRandomString(16)
+                    let scope = 'user-read-private user-read-email'
+
+                    let resp = await fetch('https://accounts.spotify.com/authorize?' 
+                        + querystring.stringify({
+                            response_type: 'code',
+                            client_id: client_id,
+                            scope: scope,
+                            redirect_uri: redirect_uri,
+                            state
+                        }), 
+                        {
+                            method: 'GET',
+                            mode: 'cors'
+                        })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        console.log(data)
+                    })
+
+                    console.log(resp)
+                    return resp
+                }
+            }
+
+    export default {
+        data() {
+            return {
+                name: 'Login'
+            }
+        },
+        methods: {
+            loginWithSpotify
+        }
+    }
 </script>
 
 <template>
     <div class="titleCard">
         <p>Details about permissions, etc</p>
-        <button>Login with Spotify</button>
+        <button @click="loginWithSpotify">Login with Spotify</button>
     </div>
 </template>
 
