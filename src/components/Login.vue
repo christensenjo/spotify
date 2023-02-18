@@ -4,9 +4,6 @@
     import client_secret from './secrets'
     const redirect_uri = 'http://127.0.0.1:5173/loggedIn'
 
-    let code = null
-    let state = null
-
     const generateRandomString = function(length) {
         var text = ''
         var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -15,22 +12,6 @@
             text += possible.charAt(Math.floor(Math.random() * possible.length))
         }
         return text
-    }
-
-    const getCookie = function(cname) {
-        let name = cname + "=";
-        let decodedCookie = decodeURIComponent(document.cookie);
-        let ca = decodedCookie.split(';');
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-            }
-        }
-        return "";
     }
 
     const loginWithSpotify = async function(event) {
@@ -49,59 +30,8 @@
                     state
                 }))
 
-            code = querystring.parse().code
-            state = querystring.parse().state
-
-            return code, state
+            return '200'
         }
-        
-        // Request refresh and access tokens after checking state
-        
-        //Check state...
-        let storedState = getCookie("state")
-        console.log(storedState)
-        if(storedState == state){
-            alert("asdflasta")
-            return null
-        }
-
-        // let authOptions = {
-        //     url: 'https://accounts.spotify.com/api/token',
-        //     form: {
-        //         code: code,
-        //         redirect_uri: redirect_uri,
-        //         grant_type: 'authorization_code'
-        //     },
-        //     headers: {
-        //         'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-        //     },
-        //     json: true
-        // };
-
-        // let tokenResponse = await fetch(authOptions)
-        // .t;
-
-        let tokenResponse = await fetch('https://accounts.spotify.com/api/token', 
-            {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')),
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "code": code,
-                    "redirect_uri": redirect_uri,
-                    "grant_type": 'authorization_code'
-                })
-            })
-        .then((response) => response.json())
-        .then((data) => {
-            //handle response data
-            console.log(data)
-            alert(data)
-        })
 
     }
 
