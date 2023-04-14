@@ -1,11 +1,12 @@
-<script>
-</script>
-
 <template>
     <div class="titleCard">
         <h1>404</h1>
     </div>
 </template>
+
+<script>
+
+</script>
 
 <style scoped>
     h1 {

@@ -1,3 +1,10 @@
+<template>
+    <div class="titleCard">
+        <p>Details about permissions, etc</p>
+        <button @click="loginWithSpotify" class="text-2xl bg-secondary text-primary rounded-xl p-4 font-medium">Login with Spotify</button>
+    </div>
+</template>
+
 <script>
     import querystring from 'querystring'
     const client_id = '8c889c344b474adcae45b280704239fe'
@@ -53,17 +60,6 @@
     }
 </script>
 
-<template>
-    <div class="titleCard">
-        <p>Details about permissions, etc</p>
-        <button @click="loginWithSpotify">Login with Spotify</button>
-    </div>
-</template>
-
 <style scoped>
-    button {
-        font-weight: 500;
-        font-size: 25px;
-        fill: green;
-    }
+
 </style>

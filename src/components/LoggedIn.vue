@@ -1,3 +1,14 @@
+<template>
+  <div class="p-8 rounded-md">
+    <h1 class="font-black text-4xl pb-8 mb-6">Logged in</h1>
+    <p>Access Token: {{ accessToken }}</p>
+    <p>Token Type: {{ tokenType }}</p>
+    <p>Expires In: {{ expiresIn }}</p>
+    <p>Refresh Token: {{ refreshToken }}</p>
+    <p>Scope: {{ scope }}</p>
+  </div>
+</template>
+
 <script>
 import axios from "axios";
 import querystring from "querystring";
@@ -100,17 +111,6 @@ export default {
   },
 };
 </script>
-
-<template>
-  <div class="titleCard bg-red p-8 rounded-md">
-    <h1 class="font-bold text-4xl mb-6">Logged in</h1>
-    <p>Access Token: {{ accessToken }}</p>
-    <p>Token Type: {{ tokenType }}</p>
-    <p>Expires In: {{ expiresIn }}</p>
-    <p>Refresh Token: {{ refreshToken }}</p>
-    <p>Scope: {{ scope }}</p>
-  </div>
-</template>
 
 <style scoped>
 

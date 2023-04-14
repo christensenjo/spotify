@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary-color: #222326;
+  --secondary-color: #1db954;
+  --text-color: #ffffff;
+}
+
 body {
   width: 100%;
   height: 100%;
@@ -17,4 +23,8 @@ body {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+}
+
+.active-link {
+  @apply border-b-2 border-solid border-green-600;
 }
