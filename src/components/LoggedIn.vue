@@ -102,8 +102,8 @@ export default {
 </script>
 
 <template>
-  <div class="titleCard">
-    <h1>Logged in</h1>
+  <div class="titleCard bg-red p-8 rounded-md">
+    <h1 class="font-bold text-4xl mb-6">Logged in</h1>
     <p>Access Token: {{ accessToken }}</p>
     <p>Token Type: {{ tokenType }}</p>
     <p>Expires In: {{ expiresIn }}</p>
@@ -113,8 +113,5 @@ export default {
 </template>
 
 <style scoped>
-  h1 {
-    font-weight: 900;
-    font-size: 40px;
-  }
+
 </style>

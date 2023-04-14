@@ -8,6 +8,16 @@ import vueJsx from '@vitejs/plugin-vue-jsx';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [vue(), vueJsx()],
+  css: {
+    preprocessorOptions: {
+      postcss: {
+        plugins: [
+          require("tailwindcss"), // Make sure to import the Tailwind CSS library
+          require("autoprefixer"),
+        ],
+      },
+    },
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
