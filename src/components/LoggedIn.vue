@@ -63,6 +63,9 @@ export default {
         }
       );
 
+      // Clean up the URL
+      window.history.replaceState({}, "", "/loggedIn");
+
       if (response.data) {
         this.accessToken = response.data.access_token;
         this.tokenType = response.data.token_type;
