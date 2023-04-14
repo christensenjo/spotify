@@ -1,100 +1,117 @@
 <script>
-    import querystring from 'querystring'
-    const client_id = '8c889c344b474adcae45b280704239fe'
-    import client_secret from './secrets'
-    const redirect_uri = 'http://127.0.0.1:5173/loggedIn'
-    let code = null
-    let state = null
+import axios from "axios";
+import querystring from "querystring";
+import { client_secret } from "./secrets";
 
-    const getCookie = function(cname) {
-        let name = cname + "="
-        let decodedCookie = decodeURIComponent(document.cookie)
-        let ca = decodedCookie.split(';')
-        for(let i = 0; i <ca.length; i++) {
-            let c = ca[i];
-            while (c.charAt(0) == ' ') {
-            c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length)
-            }
-        }
-        return ""
+const client_id = "8c889c344b474adcae45b280704239fe";
+const redirect_uri = "http://localhost:5173/loggedIn";
+
+function getCookie(cname) {
+  const name = cname + "=";
+  const decodedCookie = decodeURIComponent(document.cookie);
+  const ca = decodedCookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === " ") {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+export default {
+  data() {
+    return {
+      name: "LoggedIn",
+      accessToken: "",
+      tokenType: "",
+      expiresIn: "",
+      refreshToken: "",
+      scope: "",
+      topTracks: [],
+    };
+  },
+  async mounted() {
+    const href = window.location.href.split("?")[1].split("&");
+    const code = href[0].split("=")[1];
+    const state = href[1].split("=")[1];
+
+    const correctState = getCookie("state") === state;
+    if (!correctState) {
+      alert("The state was incorrect. Aborting authorization attempt.");
+      window.location.href = "https://open.spotify.com/";
+      return;
     }
 
-    export default {
-        data() {
-            return {
-                name: 'LoggedIn',
-            }
-        },
-        mounted(){
-            // Get results of /authorize call
-            let href = location.href.split('?')[1].split('&')
-            code = href[0].split('=')[1]
-            state = href[1].split('=')[1]
-            // console.log(code)
-            // console.log(state)
-
-            //Check state...
-            let correctState = getCookie("state") == state
-            // console.log(correctState)
-            if(!correctState){
-                alert("The state was incorrect. Aborting authorization attempt.")
-                location.href = "https://open.spotify.com/"
-                return null
-            }
-
-            // Create /token payload
-            var details = {
-                'code': 'code',
-                'redirect_uri': redirect_uri,
-                'grant_type': 'authorization_code'
-            };
-
-            var formBody = [];
-            for (var property in details) {
-            var encodedKey = encodeURIComponent(property);
-            var encodedValue = encodeURIComponent(details[property]);
-            formBody.push(encodedKey + "=" + encodedValue);
-            }
-            formBody = formBody.join("&");
-
-            // Call /token
-            let tokenResponse = fetch('https://accounts.spotify.com/api/token', 
-                {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Access-Control-Allow-Origin': '*',
-                        'Authorization': 'Basic ' + (client_id + ':' + client_secret).toString('base64'),
-                        'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
-                    },
-                    body: formBody
-                })
-            .then((response) => response.json())
-            .then((data) => {
-                //handle response data
-                console.log(data)
-                alert(data)
-            })
-
-            console.log(tokenResponse)
+    try {
+      const response = await axios.post(
+        "http://localhost:5173/api/token",
+        querystring.stringify({
+          code,
+          redirect_uri,
+          client_id,
+          client_secret,
+          grant_type: "authorization_code",
+        }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
-    }
+      );
 
+      if (response.data) {
+        this.accessToken = response.data.access_token;
+        this.tokenType = response.data.token_type;
+        this.expiresIn = response.data.expires_in;
+        this.refreshToken = response.data.refresh_token;
+        this.scope = response.data.scope;
+      }
+
+      this.fetchTopTracks();
+
+    } catch (error) {
+      console.error("Error getting token:", error);
+    }
+  },
+  methods: {
+    async fetchTopTracks() {
+      try {
+        const response = await axios.get("https://api.spotify.com/v1/me/top/tracks", {
+          headers: {
+            "Authorization": `${this.tokenType} ${this.accessToken}`,
+          },
+        });
+        
+        if (response.data) {
+          this.topTracks = response.data;
+          console.log(this.topTracks);
+        }
+      } catch (error) {
+        console.error("Error fetching top tracks:", error);
+      }
+    },
+  },
+};
 </script>
 
 <template>
-    <div class="titleCard">
-        <h1>attempting login...</h1>
-        <p>details</p>
-    </div>
+  <div class="titleCard">
+    <h1>Logged in</h1>
+    <p>Access Token: {{ accessToken }}</p>
+    <p>Token Type: {{ tokenType }}</p>
+    <p>Expires In: {{ expiresIn }}</p>
+    <p>Refresh Token: {{ refreshToken }}</p>
+    <p>Scope: {{ scope }}</p>
+  </div>
 </template>
 
 <style scoped>
-    h1 {
-        font-weight: 900;
-        font-size: 40px;
-    }
+  h1 {
+    font-weight: 900;
+    font-size: 40px;
+  }
 </style>

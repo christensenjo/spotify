@@ -27,4 +27,4 @@ coverage
 *.sln
 *.sw?
 
-components/secrets.js
+src/components/secrets.js
