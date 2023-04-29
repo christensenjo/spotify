@@ -148,7 +148,7 @@ export default {
         );
 
         // Clean up the URL
-        window.history.replaceState({}, "", "/loggedIn");
+        window.history.replaceState({}, "", "/my-music");
 
         if (response.data) {
           spotifyStore.accessToken = response.data.access_token;
