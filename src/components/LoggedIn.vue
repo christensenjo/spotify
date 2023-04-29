@@ -8,7 +8,6 @@
         :key="item.id"
         class="flex flex-row justify-around items-center my-4 py-6 rounded-lg max-w-md mx-auto"
         :style="`background-image: linear-gradient(to bottom, rgb(${item.averageColor[0]},${item.averageColor[1]},${item.averageColor[2]}), #222326)`"
-
       >
         <a :href="item.external_urls.spotify" class="w-1/3 flex justify-center">
           <img  
@@ -24,7 +23,7 @@
       </div>
     </div>
     <div v-else>
-
+      <img src="../assets/logo.png" class="w-64 p-2 animate-spin">
     </div>
 
   </div>
