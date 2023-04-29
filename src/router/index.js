@@ -10,8 +10,8 @@ const routes = [
         component: Home
     },
     {
-        path: '/loggedIn', 
-        name: 'LoggedIn', 
+        path: '/my-music', 
+        name: 'MyMusic', 
         component: LoggedIn
     },
 ]

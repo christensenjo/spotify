@@ -32,7 +32,7 @@
     import ContentCard from './ContentCard.vue'
 
     const client_id = '8c889c344b474adcae45b280704239fe'
-    const redirect_uri = 'http://localhost:5173/loggedIn'
+    const redirect_uri = 'http://localhost:5173/my-music'
 
     const generateRandomString = function(length) {
         var text = ''
