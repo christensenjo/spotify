@@ -5,6 +5,9 @@
       <h1 class="font-black text-4xl text-secondary">joelbc-spotify</h1>
       <router-link to="/" class="ml-6 font-semibold text-xl" active-class="active-link">Home</router-link>
       <router-link to="/my-music" class="ml-6 font-semibold text-xl" active-class="active-link">My Music</router-link>
+      <button v-if="pathname === '/my-music'" @click="logout" class="mt-4 bg-white hover:bg-secondary hover:text-white text-secondary font-bold py-2 px-4 rounded">
+        Logout
+      </button>
     </div>
     <router-view class="flex-grow"></router-view>
 
@@ -15,7 +18,23 @@
 </template>
 
 <script>
+import { useSpotifyStore } from "@/store/spotifyStore.js";
 
+export default {
+  setup() {
+    const spotifyStore = useSpotifyStore();
+    const pathname = window.location.pathname;
+
+    const logout = () => {
+      spotifyStore.logout();
+    };
+
+    return {
+      logout,
+      pathname
+    };
+  },
+};
 </script>
 
 <style scoped>
