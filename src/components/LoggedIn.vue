@@ -1,24 +1,29 @@
 <template>
   <div class="p-8 rounded-md flex flex-col justify-center text-center items-center">
     
-    <div v-if="tracksToDisplay.length > 0">
+    <div v-if="tracksToDisplay && tracksToDisplay.length > 0">
       <h1 class="font-black text-4xl pb-8 mb-6">Top Tracks</h1>
 
       <div v-for="item in tracksToDisplay" 
         :key="item.id"
         class="flex flex-row justify-around items-center my-4 py-6 rounded-lg max-w-md mx-auto"
-        :style="`background-image: linear-gradient(to bottom, rgb(${item.averageColor[0]},${item.averageColor[1]},${item.averageColor[2]}), #222326)`"
+        :style="'background-image: linear-gradient(to bottom, rgb(' + (item?.averageColor[0] ?? 0) + ',' + (item?.averageColor[1] ?? 0) + ',' + (item?.averageColor[2] ?? 0) + ', #222326)'"
       >
-        <a :href="item.external_urls.spotify" class="w-1/3 flex justify-center">
+        <!-- Album Cover -->
+        <a :href="item.external_urls?.spotify" class="w-1/3 flex justify-center">
           <img  
-            :src="item.album.images[0].url" 
-            :alt="item.name" 
+            :src="item.album.images[0] ? item.album.images[0]?.url : ''" 
+            :alt="item?.name" 
             class="w-fit items-center ml-8" 
           />
         </a>
+        <!-- Title by Artist -->
         <div class="w-1/2 flex flex-col items-center">
-          <p class="">{{ item.name }}</p>
-          <p>by</p><p v-for="artist in item.artists">{{ artist.name }}</p>
+          <p>{{ item?.name }}</p>
+          <p>by</p>
+          <p v-for="artist in item.artists">
+            {{ artist?.name }}
+          </p>
         </div>
       </div>
     </div>
@@ -69,13 +74,11 @@ export default {
         });
 
         if (response.data) {
-          spotifyStore.topTracks = response.data;
-
-          for (const item of spotifyStore.topTracks.items) {
+          for (const item of response.data.items) {
             item.averageColor = await getAverageColor(item.album.images[0].url);
           }
 
-          console.log(spotifyStore.topTracks.items);
+          spotifyStore.setTopTracks(response.data);
         }
       } catch (error) {
         console.error("Error fetching top tracks:", error);
@@ -170,11 +173,23 @@ export default {
       }
     });
 
+    // return {
+    //   ...spotifyStore,
+    //   fetchTopTracks,
+    //   tracksToDisplay,
+    // };
     return {
-      ...spotifyStore,
       fetchTopTracks,
       tracksToDisplay,
+      // Explicitly return only the properties and methods you need
+      accessToken: spotifyStore.accessToken,
+      tokenType: spotifyStore.tokenType,
+      expiresIn: spotifyStore.expiresIn,
+      refreshToken: spotifyStore.refreshToken,
+      scope: spotifyStore.scope,
+      // Add other properties and methods as needed
     };
+
   },
 };
 </script>

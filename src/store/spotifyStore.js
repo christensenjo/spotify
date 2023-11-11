@@ -30,5 +30,8 @@ export const useSpotifyStore = defineStore({
       // 3. Redirect the user to the Spotify account apps management page
       window.location.href = "https://www.spotify.com/us/account/apps/";
     },
+    setTopTracks(tracks){
+      this.topTracks = tracks;
+    },
   },
 })
