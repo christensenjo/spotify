@@ -1,16 +1,17 @@
 <template>
   <div class="p-8 rounded-md flex flex-col justify-center text-center items-center">
     
-    <div v-if="tracksToDisplay && tracksToDisplay.length > 0">
+    <div v-if="!isLoading && tracksToDisplay && tracksToDisplay.length > 0">
       <h1 class="font-black text-4xl pb-8 mb-6">Top Tracks</h1>
 
       <div v-for="item in tracksToDisplay" 
         :key="item.id"
         class="flex flex-row justify-around items-center my-4 py-6 rounded-lg max-w-md mx-auto"
-        :style="'background-image: linear-gradient(to bottom, rgb(' + (item?.averageColor[0] ?? 0) + ',' + (item?.averageColor[1] ?? 0) + ',' + (item?.averageColor[2] ?? 0) + ', #222326)'"
+        :style="albumGradientStyle(item)"
       >
         <!-- Album Cover -->
-        <a :href="item.external_urls?.spotify" class="w-1/3 flex justify-center">
+        <!-- :href="item.external_urls?.spotify" links to the track in spotify -->
+        <a class="w-1/3 flex justify-center">
           <img  
             :src="item.album.images[0] ? item.album.images[0]?.url : ''" 
             :alt="item?.name" 
@@ -41,6 +42,7 @@ import { client_secret } from "./secrets";
 import { useSpotifyStore } from "@/store/spotifyStore.js";
 import { onMounted, computed } from "vue";
 import ColorThief from "colorthief";
+import { ref } from "vue";
 
 const client_id = "8c889c344b474adcae45b280704239fe";
 const redirect_uri = "http://localhost:5173/my-music";
@@ -64,22 +66,35 @@ function getCookie(cname) {
 export default {
   setup() {
     const spotifyStore = useSpotifyStore();
+    const isLoading = ref(true);
 
     const fetchTopTracks = async () => {
       try {
+        isLoading.value = true;
         const response = await axios.get("https://api.spotify.com/v1/me/top/tracks", {
           headers: {
             "Authorization": `${spotifyStore.tokenType} ${spotifyStore.accessToken}`,
           },
         });
 
-        if (response.data) {
-          for (const item of response.data.items) {
-            item.averageColor = await getAverageColor(item.album.images[0].url);
-          }
+        console.log(response.data.items);
 
-          spotifyStore.setTopTracks(response.data);
-        }
+        await Promise.all(response.data.items.map(item => {
+          return getAverageColor(item.album.images[0].url).then(color => {
+            console.log(color);
+            item.averageColor = color;
+          });
+        }));
+
+        spotifyStore.setTopTracks(response.data);
+        isLoading.value = false;
+
+        // if (response.data) {
+        //   for (const item of response.data.items) {
+        //     item.averageColor = await getAverageColor(item.album.images[0].url);
+        //   }
+
+        // }
       } catch (error) {
         console.error("Error fetching top tracks:", error);
       }
@@ -96,6 +111,13 @@ export default {
         return [];
       }      
     });
+
+    const albumGradientStyle = (item) => {    
+      if (!item.averageColor) return ''; // Return an empty string if no color is available
+      // Assuming item.averageColor is an array of RGB values like [r, g, b]
+      return `background-image: linear-gradient(to bottom, rgba(${item.averageColor[0]}, ${item.averageColor[1]}, ${item.averageColor[2]}, 1), #222326)`;
+    };
+
 
     const getAverageColor = async (imageUrl) => {
       return new Promise((resolve, reject) => {
@@ -181,6 +203,8 @@ export default {
     return {
       fetchTopTracks,
       tracksToDisplay,
+      albumGradientStyle,
+      isLoading,
       // Explicitly return only the properties and methods you need
       accessToken: spotifyStore.accessToken,
       tokenType: spotifyStore.tokenType,
