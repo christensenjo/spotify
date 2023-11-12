@@ -6,8 +6,9 @@
 
       <div v-for="item in tracksToDisplay" 
         :key="item.id"
-        class="flex flex-row justify-around items-center my-4 py-6 rounded-lg max-w-md mx-auto"
+        class="flex flex-row justify-around items-center my-4 py-6 rounded-lg max-w-md mx-auto cursor-pointer"
         :style="albumGradientStyle(item)"
+        @click="openTrackAnalysis(item)"
       >
         <!-- Album Cover -->
         <!-- :href="item.external_urls?.spotify" links to the track in spotify -->
@@ -43,6 +44,7 @@ import { useSpotifyStore } from "@/store/spotifyStore.js";
 import { onMounted, computed } from "vue";
 import ColorThief from "colorthief";
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 
 const client_id = "8c889c344b474adcae45b280704239fe";
 const redirect_uri = "http://localhost:5173/my-music";
@@ -67,6 +69,7 @@ export default {
   setup() {
     const spotifyStore = useSpotifyStore();
     const isLoading = ref(true);
+    const router = useRouter();
 
     const fetchTopTracks = async () => {
       try {
@@ -77,11 +80,8 @@ export default {
           },
         });
 
-        console.log(response.data.items);
-
         await Promise.all(response.data.items.map(item => {
           return getAverageColor(item.album.images[0].url).then(color => {
-            console.log(color);
             item.averageColor = color;
           });
         }));
@@ -118,6 +118,10 @@ export default {
       return `background-image: linear-gradient(to bottom, rgba(${item.averageColor[0]}, ${item.averageColor[1]}, ${item.averageColor[2]}, 1), #222326)`;
     };
 
+    const openTrackAnalysis = (item) => {
+      console.log(item);
+      router.push({ name: 'TrackAnalysis', params: { id: item.id } });
+    };
 
     const getAverageColor = async (imageUrl) => {
       return new Promise((resolve, reject) => {
@@ -195,16 +199,13 @@ export default {
       }
     });
 
-    // return {
-    //   ...spotifyStore,
-    //   fetchTopTracks,
-    //   tracksToDisplay,
-    // };
+
     return {
       fetchTopTracks,
       tracksToDisplay,
       albumGradientStyle,
       isLoading,
+      openTrackAnalysis,
       // Explicitly return only the properties and methods you need
       accessToken: spotifyStore.accessToken,
       tokenType: spotifyStore.tokenType,
