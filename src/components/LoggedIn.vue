@@ -88,13 +88,7 @@ export default {
 
         spotifyStore.setTopTracks(response.data);
         isLoading.value = false;
-
-        // if (response.data) {
-        //   for (const item of response.data.items) {
-        //     item.averageColor = await getAverageColor(item.album.images[0].url);
-        //   }
-
-        // }
+        
       } catch (error) {
         console.error("Error fetching top tracks:", error);
       }
