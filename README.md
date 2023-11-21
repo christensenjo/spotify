@@ -1,6 +1,10 @@
 # joelbc-spotify
 
-Exploring the capabilities and use cases of spotify web API
+A simple SPA built with Vue and a Pinia store. Uses the Spotify Web API to list a user's top tracks and provide musical analysis of each track.
+
+![Screenshot of My Music page](/src/assets/screenshots/top_tracks.png?raw=true)
+
+![Screenshot of track analysis](/src/assets/screenshots/not_tight.png?raw=true)
 
 ## Project Setup
 
