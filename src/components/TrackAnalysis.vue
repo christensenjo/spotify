@@ -6,8 +6,8 @@
     <p>An error occurred: {{ error.message }}</p>
   </div>
   <div v-else 
-    class="flex flex-col justify-start items-center mt-12 gap-6"
-    :style="albumGradientStyle(track)"
+    class="flex flex-col justify-start items-center mt-12 gap-6 rounded-lg p-8"
+    :style="gradientStyle"
   >
     <div class="flex justify-center items-center gap-8">
       <img
@@ -100,7 +100,11 @@
       });
 
       const track = computed(() => spotifyStore.currentTrack ?? {});
-  
+
+      const gradientStyle = computed(() => { 
+        return spotifyStore?.currentAlbumGradientStyle
+      });
+      
       onMounted(() => {
         if (route.params.id) {
             fetchTrackAnalysis(route.params.id);
@@ -118,6 +122,7 @@
         formatDuration,
         artists,
         track,
+        gradientStyle,
       };
     },
   };
