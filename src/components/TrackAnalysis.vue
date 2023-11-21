@@ -6,7 +6,7 @@
     <p>An error occurred: {{ error.message }}</p>
   </div>
   <div v-else 
-    class="flex flex-col justify-start items-center mt-12 gap-6 rounded-lg p-8"
+    class="flex flex-col justify-start items-center mt-12 gap-6 rounded-lg p-8 w-full"
     :style="gradientStyle"
   >
     <div class="flex justify-center items-center gap-8">
@@ -23,15 +23,50 @@
         </p>
       </div>
     </div>
-    <div>
+    <div class="flex flex-wrap text-primary gap-1 justify-center">
       <!-- Displaying more track details -->
-      <p><strong>Duration:</strong> {{ formatDuration(trackAnalysis.track?.duration) }}</p>
-      <p><strong>Loudness:</strong> {{ trackAnalysis.track?.loudness ?? '' }} dB</p>
-      <p><strong>Tempo:</strong> {{ trackAnalysis.track?.tempo ?? '' }} BPM</p>
-      <p><strong>Key:</strong> {{ getKey(trackAnalysis.track?.key) }}</p>
-      <p><strong>Mode:</strong> {{ trackAnalysis.track?.mode == 1 ? 'Major' : 'Minor' }}</p>
-      <p><strong>Time Signature:</strong> {{ trackAnalysis.track?.time_signature }}/4</p>
-      <!-- Add other details as needed -->
+      <div class="bg-white border-2 rounded-lg w-1/3 p-4 flex justify-around">
+        <div class="flex flex-col justify-center text-center">
+          <p class="text-2xl font-bold">Duration</p>
+          <p>{{ formatDuration(trackAnalysis.track?.duration) }}</p>
+        </div>
+        <img src="../assets/duration.png" class="w-20 p-2"/>
+      </div>
+      <div class="bg-white border-2 rounded-lg w-1/3 p-4 px-6 flex justify-around">
+        <div class="flex flex-col justify-center text-center">
+          <p class="text-2xl font-bold">Loudness</p>
+          <p>{{ trackAnalysis.track?.loudness ?? '' }} dB</p>
+        </div>
+        <img src="../assets/loudness.png" class="w-20 p-2"/>
+      </div>
+      <div class="bg-white border-2 rounded-lg w-1/3 p-4 flex justify-around">
+        <div class="flex flex-col justify-center text-center">
+          <p class="text-2xl font-bold">Tempo</p>
+          <p>{{ trackAnalysis.track?.tempo ?? '' }} BPM</p>
+        </div>
+        <img src="../assets/tempo.png" class="w-20 p-2"/>
+      </div>
+      <div class="bg-white border-2 rounded-lg w-1/3 p-4 flex justify-around">
+        <div class="flex flex-col justify-center text-center">
+          <p class="text-2xl font-bold">Key</p>
+          <p>{{ getKey(trackAnalysis.track?.key) }}</p>
+        </div>
+        <img src="../assets/music_notes_2.png" class="w-20 p-2"/>
+      </div>
+      <div class="bg-white border-2 rounded-lg w-1/3 p-4 flex justify-around">
+        <div class="flex flex-col justify-center text-center">
+          <p class="text-2xl font-bold">Mode</p>
+          <p>{{ trackAnalysis.track?.mode == 1 ? 'Major' : 'Minor' }}</p>
+        </div>
+        <img src="../assets/sheet_music.png" class="w-20 p-2"/>
+      </div>
+      <div class="bg-white border-2 rounded-lg w-1/3 p-4 flex justify-around">
+        <div class="flex flex-col justify-center text-center">
+          <p class="text-2xl font-bold">Time Signature</p>
+          <p>{{ trackAnalysis.track?.time_signature }}/4</p>
+        </div>
+        <img src="../assets/time_signature.png" class="w-20 p-2"/>
+      </div>
     </div>
   </div>
 </template>
