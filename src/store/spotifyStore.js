@@ -14,6 +14,11 @@ export const useSpotifyStore = defineStore({
     state: '',
     currentTrack: {},
   }),
+  getters: {
+    currentAlbumGradientStyle(){
+      return this.albumGradientStyle(this.currentTrack);
+    },
+  },
   actions: {
     logout(){
       // 1. Clear the cookie and relevant data in the local state/store
@@ -58,6 +63,11 @@ export const useSpotifyStore = defineStore({
           reject(new Error("Failed to load image"));
         };
       });
+    },
+    albumGradientStyle(item){    
+      if (!item.averageColor) return ''; // Return an empty string if no color is available
+      // Assuming item.averageColor is an array of RGB values like [r, g, b]
+      return `background-image: linear-gradient(to bottom, rgba(${item.averageColor[0]}, ${item.averageColor[1]}, ${item.averageColor[2]}, 1), #222326)`;
     }
   },
 })

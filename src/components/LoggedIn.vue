@@ -7,7 +7,7 @@
       <div v-for="item in tracksToDisplay" 
         :key="item.id"
         class="flex flex-row justify-around items-center my-4 py-6 rounded-lg max-w-md mx-auto cursor-pointer"
-        :style="albumGradientStyle(item)"
+        :style="computedAlbumGradientStyle(item)"
         @click="openTrackAnalysis(item)"
       >
         <!-- Album Cover -->
@@ -41,7 +41,7 @@ import axios from "axios";
 import querystring from "querystring";
 import { client_secret } from "./secrets";
 import { useSpotifyStore } from "@/store/spotifyStore.js";
-import { onMounted, computed } from "vue";
+import { watch, onMounted, computed } from "vue";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -103,16 +103,20 @@ export default {
       }      
     });
 
-    const albumGradientStyle = (item) => {    
-      if (!item.averageColor) return ''; // Return an empty string if no color is available
-      // Assuming item.averageColor is an array of RGB values like [r, g, b]
-      return `background-image: linear-gradient(to bottom, rgba(${item.averageColor[0]}, ${item.averageColor[1]}, ${item.averageColor[2]}, 1), #222326)`;
-    };
-
     const openTrackAnalysis = (item) => {
       spotifyStore.setCurrentTrack(item);
       router.push({ name: 'TrackAnalysis', params: { id: item.id } });
     };
+
+    const computedAlbumGradientStyle = computed(() => {
+      if(spotifyStore && spotifyStore.albumGradientStyle){
+        return (item) => {
+          return spotifyStore.albumGradientStyle(item);
+        };
+      }else{
+        return () => {return '';};
+      }
+    });
 
     onMounted(async () => {
       if(window.location.href.split("?").length >= 2) {
@@ -168,13 +172,12 @@ export default {
       }
     });
 
-
     return {
       fetchTopTracks,
       tracksToDisplay,
-      albumGradientStyle,
       isLoading,
       openTrackAnalysis,
+      computedAlbumGradientStyle,
       // Explicitly return only the properties and methods you need
       accessToken: spotifyStore.accessToken,
       tokenType: spotifyStore.tokenType,

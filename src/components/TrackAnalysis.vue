@@ -5,7 +5,10 @@
   <div v-else-if="error">
     <p>An error occurred: {{ error.message }}</p>
   </div>
-  <div v-else class="flex flex-col justify-start items-center mt-12 gap-6">
+  <div v-else 
+    class="flex flex-col justify-start items-center mt-12 gap-6"
+    :style="albumGradientStyle(track)"
+  >
     <div class="flex justify-center items-center gap-8">
       <img
         :src="track.album.images[0].url ??  ''" 
