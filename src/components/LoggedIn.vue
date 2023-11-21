@@ -42,7 +42,6 @@ import querystring from "querystring";
 import { client_secret } from "./secrets";
 import { useSpotifyStore } from "@/store/spotifyStore.js";
 import { onMounted, computed } from "vue";
-import ColorThief from "colorthief";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 
@@ -81,19 +80,17 @@ export default {
         });
 
         await Promise.all(response.data.items.map(item => {
-          return getAverageColor(item.album.images[0].url).then(color => {
+          return spotifyStore.getAverageColor(item.album.images[0].url).then(color => {
             item.averageColor = color;
           });
         }));
 
         spotifyStore.setTopTracks(response.data);
         isLoading.value = false;
-        
       } catch (error) {
         console.error("Error fetching top tracks:", error);
       }
     };
-
 
     const tracksToDisplay = computed (() => {
       if(spotifyStore.topTracks 
@@ -113,30 +110,8 @@ export default {
     };
 
     const openTrackAnalysis = (item) => {
-      console.log(item);
+      spotifyStore.setCurrentTrack(item);
       router.push({ name: 'TrackAnalysis', params: { id: item.id } });
-    };
-
-    const getAverageColor = async (imageUrl) => {
-      return new Promise((resolve, reject) => {
-        const colorThief = new ColorThief();
-        const img = new Image();
-        img.crossOrigin = "Anonymous";
-        img.src = imageUrl;
-
-        img.onload = () => {
-          try {
-            const color = colorThief.getColor(img);
-            resolve(color);
-          } catch (error) {
-            reject(error);
-          }
-        };
-
-        img.onerror = () => {
-          reject(new Error("Failed to load image"));
-        };
-      });
     };
 
     onMounted(async () => {
@@ -206,7 +181,6 @@ export default {
       expiresIn: spotifyStore.expiresIn,
       refreshToken: spotifyStore.refreshToken,
       scope: spotifyStore.scope,
-      // Add other properties and methods as needed
     };
 
   },

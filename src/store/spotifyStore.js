@@ -1,4 +1,5 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
+import ColorThief from "colorthief";
 
 export const useSpotifyStore = defineStore({
   id: 'spotify',
@@ -11,6 +12,7 @@ export const useSpotifyStore = defineStore({
     topTracks: [],
     code: '',
     state: '',
+    currentTrack: {},
   }),
   actions: {
     logout(){
@@ -33,5 +35,29 @@ export const useSpotifyStore = defineStore({
     setTopTracks(tracks){
       this.topTracks = tracks;
     },
+    setCurrentTrack(track){
+      this.currentTrack = track;
+    },
+    async getAverageColor(imageUrl){
+      return new Promise((resolve, reject) => {
+        const colorThief = new ColorThief();
+        const img = new Image();
+        img.crossOrigin = "Anonymous";
+        img.src = imageUrl;
+
+        img.onload = () => {
+          try {
+            const color = colorThief.getColor(img);
+            resolve(color);
+          } catch (error) {
+            reject(error);
+          }
+        };
+
+        img.onerror = () => {
+          reject(new Error("Failed to load image"));
+        };
+      });
+    }
   },
 })
